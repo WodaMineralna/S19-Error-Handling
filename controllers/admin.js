@@ -1,0 +1,97 @@
+const Product = require("../models/product");
+
+const PLACEHOLDER_DETAILS = { cause: null, message: "Something went wrong..." };
+
+exports.getProductsPage = async (req, res, next) => {
+  const products = await Product.fetchAll(req.user._id);
+  return res.render("admin/products", {
+    products,
+    pageTitle: "Admin Products",
+    path: "/admin/products",
+  });
+};
+
+exports.getAddProduct = (req, res, next) => {
+  return res.render("admin/add-product", {
+    pageTitle: "Add Product",
+    path: "/admin/add-product",
+    editing: false,
+  });
+};
+
+exports.postAddProduct = async (req, res, next) => {
+  const { title, imageUrl, description, price } = req.body;
+  const { didSucceed, details = PLACEHOLDER_DETAILS } =
+    await Product.addProduct({
+      title,
+      price,
+      description,
+      imageUrl,
+      userId: req.user._id,
+    });
+
+  if (!didSucceed) {
+    return res.render("admin/edit-product", {
+      pageTitle: "Add Product",
+      path: "/admin/add-product",
+      editing: false,
+      errorMessage: [details],
+    });
+  }
+  if (didSucceed) {
+    req.flash("info", details);
+    return res.redirect(`/products`);
+  }
+};
+
+exports.getEditProduct = async (req, res, next) => {
+  const editMode = req.query.edit;
+  if (!editMode) return res.redirect("/");
+
+  const id = req.params.productId;
+  const {
+    didSucceed,
+    details = PLACEHOLDER_DETAILS,
+    product = {},
+  } = await Product.findProductById(id);
+
+  if (!didSucceed) {
+    req.flash("error", details);
+    return res.redirect("/products");
+  }
+  if (didSucceed) {
+    return res.render("admin/edit-product", {
+      productId: id,
+      oldInput: product,
+      pageTitle: "Edit Product",
+      path: "/admin/edit-product",
+      editing: editMode,
+    });
+  }
+};
+
+exports.postEditProduct = async (req, res, next) => {
+  const id = req.body.productId;
+  const { title, price, description, imageUrl } = req.body;
+  const { didSucceed, details = PLACEHOLDER_DETAILS } =
+    await Product.editProductById(
+      id,
+      title,
+      price,
+      description,
+      imageUrl,
+      req.user._id
+    );
+
+  req.flash(didSucceed ? "info" : "error", details);
+  return res.redirect("/admin/products");
+};
+
+exports.postDeleteProduct = async (req, res, next) => {
+  const id = req.body.productId;
+  const { didSucceed, details = PLACEHOLDER_DETAILS } =
+    await Product.deleteProduct(id, req.user._id);
+
+  req.flash(didSucceed ? "info" : "error", details);
+  return res.redirect("/admin/products");
+};
