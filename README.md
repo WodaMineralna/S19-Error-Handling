@@ -1,6 +1,6 @@
 # Node.js Course - S19 Error Handling
 
-Practice code for Section 19 - Error Handling, part of the course "NodeJS - The Complete Guide (MVC, REST APIs, GraphQL, Deno)" by Maximilian Schwarzmüller.
+Practice code for Section 19 - Error Handling, part of the course "NodeJS - The Complete Guide (MVC, REST APIs, GraphQL, Deno)" by Academind, Maximilian Schwarzmüller.
 
 This project covers:
 - Refining and standardizing the existing error handling system
