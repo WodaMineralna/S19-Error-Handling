@@ -11,8 +11,6 @@ import createLogger from "../utils/logger.js";
 
 const log = createLogger(import.meta.url);
 
-const EMAIL_SEND_DISABLED = required("EMAIL_SEND_DISABLED");
-
 export async function loginUser(userData) {
   const errorDetails = [
     { cause: "email", message: "Invalid email or password" },
@@ -82,19 +80,19 @@ export async function singupUser(userData) {
 
     await user.save();
 
-    if (EMAIL_SEND_DISABLED === "true") {
-      log(
-        "warn",
-        "[EMAIL NOT SENT] - EMAIL_SEND_DISABLED env var was set to true"
-      );
-    } else {
-      const dummyID = crypto.randomUUID();
-      await sendEmail(
-        email,
-        "Signup succeeded!",
-        `<h1>You succesfully signed up!</h1><p>Dummy ID: ${dummyID}</p>`
-      );
-    }
+    const dummyID = crypto.randomUUID();
+    await sendEmail(
+      email,
+      "Signup succeeded!",
+      `<h1>You succesfully signed up!</h1><p>Dummy ID: ${dummyID}</p>`,
+      {
+        disabled: {
+          logType: "warn",
+          logMessage:
+            "[EMAIL NOT SENT] - EMAIL_SEND_DISABLED env var was set to true",
+        },
+      }
+    );
 
     log("success", "User created");
     return {
@@ -140,22 +138,21 @@ export async function resetPassword(email) {
         foundUser.resetPasswordToken.expiresAt = Date.now() + ONE_HOUR;
         await foundUser.save();
 
-        if (EMAIL_SEND_DISABLED === "true") {
-          log(
-            "warn",
-            `[EMAIL NOT SENT] - EMAIL_SEND_DISABLED env var was set to true\nGenerated token: ${token}\nPassword reset link: ${`http://localhost:${PORT}/reset-password/${token}`}`
-          );
-        } else {
-          await sendEmail(
-            foundUser.email,
-            "Password Reset Link",
-            `
+        await sendEmail(
+          foundUser.email,
+          "Password Reset Link",
+          `
             <h1>You requested a password reset</h1>
             <p>Click this <a href="http://localhost:${PORT}/reset-password/${token}">link</a> to set a new password.</p>
             <p>Dummy ID: ${dummyID}</p>
-            `
-          );
-        }
+            `,
+          {
+            disabled: {
+              logType: "warn",
+              logMessage: `[EMAIL NOT SENT] - EMAIL_SEND_DISABLED env var was set to true\nGenerated token: ${token}\nPassword reset link: ${`http://localhost:${PORT}/reset-password/${token}`}`,
+            },
+          }
+        );
 
         log("success", "Password reset email sent");
         return resolve({
