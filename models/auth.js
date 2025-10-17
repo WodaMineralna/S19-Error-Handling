@@ -7,12 +7,9 @@ import { comparePasswords } from "../utils/validation.js";
 import newError from "../utils/newError.js";
 import sendEmail from "../utils/sendEmail.js";
 import required from "../utils/requireEnvVar.js";
-const User = require("./user");
+import createLogger from "../utils/logger.js";
 
-const { comparePasswords } = require("../utils/validation");
-const newError = require("../utils/newError");
-const sendEmail = require("../utils/sendEmail");
-const required = require("../utils/requireEnvVar");
+const log = createLogger(import.meta.url);
 
 const EMAIL_SEND_DISABLED = required("EMAIL_SEND_DISABLED");
 
@@ -26,27 +23,33 @@ export async function loginUser(userData) {
     const { email, password } = userData;
 
     const foundUser = await User.findOne({ email });
-    if (!foundUser)
+    if (!foundUser) {
+      log("warn", `User with email ${email} not found`);
       return {
         didSucceed: false,
         details: errorDetails,
         oldInput: { email: userData.email },
       };
+    }
 
     const doMatch = await comparePasswords(password.trim(), foundUser.password);
-    if (!doMatch)
+    if (!doMatch) {
+      log("warn", `Invalid credentials`);
       return {
         didSucceed: false,
         details: errorDetails,
         oldInput: { email: userData.email },
       };
+    }
 
+    log("success", "Succesfully logged in");
     return {
       didSucceed: true,
       details: { message: "Welcome!" },
       user: foundUser,
     };
   } catch (error) {
+    log("error", error);
     throw newError("Failed to login user", error);
   }
 }
@@ -58,7 +61,8 @@ export async function singupUser(userData) {
     const userExists = await User.findOne({ email });
 
     // ^ return will be handled in controller, calling res.render
-    if (userExists)
+    if (userExists) {
+      log("warn", `Email ${email} already taken`);
       return {
         didSucceed: false,
         details: {
@@ -67,6 +71,7 @@ export async function singupUser(userData) {
             "Email already in use. Please provide different email adress",
         },
       };
+    }
 
     const hashedPwd = await bcrypt.hash(password, 12);
     const user = new User({
@@ -78,7 +83,8 @@ export async function singupUser(userData) {
     await user.save();
 
     if (EMAIL_SEND_DISABLED === "true") {
-      console.log(
+      log(
+        "warn",
         "[EMAIL NOT SENT] - EMAIL_SEND_DISABLED env var was set to true"
       );
     } else {
@@ -90,6 +96,7 @@ export async function singupUser(userData) {
       );
     }
 
+    log("success", "User created");
     return {
       didSucceed: true,
       details: {
@@ -97,6 +104,7 @@ export async function singupUser(userData) {
       },
     };
   } catch (error) {
+    log("error", error);
     throw newError("Failed to signup user", error);
   }
 }
@@ -112,7 +120,8 @@ export async function resetPassword(email) {
       try {
         const foundUser = await User.findOne({ email });
 
-        if (!foundUser)
+        if (!foundUser) {
+          log("warn", `Email ${email} not found`);
           return resolve({
             didSucceed: false,
             details: {
@@ -121,6 +130,7 @@ export async function resetPassword(email) {
             },
             oldInput: { email },
           });
+        }
 
         const PORT = required("SERVER_PORT") || 3000;
         const ONE_HOUR = 60 * 60 * 1000; // 1h in miliseconds
@@ -131,8 +141,9 @@ export async function resetPassword(email) {
         await foundUser.save();
 
         if (EMAIL_SEND_DISABLED === "true") {
-          console.log(
-            `[EMAIL NOT SENT] - EMAIL_SEND_DISABLED env var was set to true\nGenerated token: ${token}\n\nPassword reset link: ${`http://localhost:${PORT}/reset-password/${token}`}\n\n`
+          log(
+            "warn",
+            `[EMAIL NOT SENT] - EMAIL_SEND_DISABLED env var was set to true\nGenerated token: ${token}\nPassword reset link: ${`http://localhost:${PORT}/reset-password/${token}`}`
           );
         } else {
           await sendEmail(
@@ -146,6 +157,7 @@ export async function resetPassword(email) {
           );
         }
 
+        log("success", "Password reset email sent");
         return resolve({
           didSucceed: true,
           details: {
@@ -153,6 +165,7 @@ export async function resetPassword(email) {
           },
         });
       } catch (error) {
+        log("error", error);
         throw newError("Failed to reset user password", error);
       }
     });
@@ -167,23 +180,28 @@ export async function validateToken(token) {
       "resetPasswordToken.token": token,
       "resetPasswordToken.expiresAt": { $gt: Date.now() },
     });
-    if (!matchingUser)
+    if (!matchingUser) {
+      log("warn", "Invalid or expired password reset token");
       return {
         didSucceed: false,
         details: {
           message: "Invalid or expired password reset link",
         },
       };
+    }
     // console.log("matchingUser based on resetPassword token: ", matchingUser); // DEBUGGING
 
     const matchingUserId = matchingUser._id;
     const matchingUserHashedPwd = matchingUser.password;
+
+    log("success", "Token validated succesfully");
     return {
       didSucceed: true,
       matchingUserId,
       matchingUserHashedPwd,
     };
   } catch (error) {
+    log("error", error);
     throw newError("Could not validate reset password token", error);
   }
 }
@@ -195,15 +213,18 @@ export async function updatePassword(formData) {
     // ^ re-validate token to prevent tampering and (some) edge cases
     const { didSucceed, details, matchingUserId, matchingUserHashedPwd } =
       await validateToken(token);
-    if (!didSucceed)
+    if (!didSucceed) {
+      log("warn", `Password not updated - ${details.message}`);
       return {
         didSucceed,
         details,
         toLoginPage: true,
       };
+    }
 
     const doMatch = await comparePasswords(password, matchingUserHashedPwd);
-    if (doMatch)
+    if (doMatch) {
+      log("warn", "Old and new passwords match");
       return {
         didSucceed: false,
         details: {
@@ -212,6 +233,7 @@ export async function updatePassword(formData) {
         },
         toLoginPage: false,
       };
+    }
 
     const hashedPwd = await bcrypt.hash(password, 12);
     const updated = await User.findOneAndUpdate(
@@ -229,7 +251,8 @@ export async function updatePassword(formData) {
       },
       { new: false }
     );
-    if (!updated)
+    if (!updated) {
+      log("warn", "Password not updated - invalid or expired token");
       return {
         didSucceed: false,
         details: {
@@ -237,7 +260,9 @@ export async function updatePassword(formData) {
         },
         toLoginPage: false,
       };
+    }
 
+    log("success", "Password updated");
     return {
       didSucceed: true,
       details: {
@@ -246,6 +271,7 @@ export async function updatePassword(formData) {
       toLoginPage: true,
     };
   } catch (error) {
+    log("error", error);
     throw newError("Could not update password", error);
   }
 }

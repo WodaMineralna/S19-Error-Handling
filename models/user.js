@@ -1,9 +1,11 @@
+import mongoose from "mongoose";
 import newError from "../utils/newError.js";
+import createLogger from "../utils/logger.js";
 
 import Order from "./order.js";
 import Product from "./product.js";
 
-import mongoose from "mongoose";
+const log = createLogger(import.meta.url);
 
 const { Schema } = mongoose;
 
@@ -45,6 +47,7 @@ userSchema.methods.getCart = async function () {
 
     return userData.cart.items;
   } catch (error) {
+    log("error", error);
     throw newError("Failed to get cart data", error);
   }
 };
@@ -59,6 +62,7 @@ userSchema.methods.addToCart = async function (productId, productData) {
     } = await Product.findProductById(productId);
 
     if (!didSucceed) {
+      log("warn", `Product not added to cart - ${details.message}`);
       return { didSucceed, details };
     }
 
@@ -66,7 +70,6 @@ userSchema.methods.addToCart = async function (productId, productData) {
     const existingProductIndex = this.cart.items.findIndex((prod) => {
       return prod.productId.toString() === productData._id.toString();
     });
-    console.log("Existing prod index:", existingProductIndex); // DEBUGGING
 
     let updatedCart;
 
@@ -86,8 +89,11 @@ userSchema.methods.addToCart = async function (productId, productData) {
 
     this.cart = updatedCart;
     await this.save();
+
+    log("success", "Product added to cart");
     return { didSucceed: true, details: { message: "Product added to cart!" } };
   } catch (error) {
+    log("error", error);
     throw newError("Failed to add item to cart", error);
   }
 };
@@ -101,6 +107,7 @@ userSchema.methods.deleteItemFromCart = async function (productId) {
 
     // * check if product was NOT deleted from cart (due to an error / productId tampering attempt)
     if (updatedCartItems.length === this.cart.items.length) {
+      log("warn", "Product deletion from cart failed");
       return {
         didSucceed: false,
         details: {
@@ -112,11 +119,13 @@ userSchema.methods.deleteItemFromCart = async function (productId) {
     this.cart.items = updatedCartItems;
     this.save();
 
+    log("success", "Product deleted from cart");
     return {
       didSucceed: true,
       details: { message: "Product deleted from cart" },
     };
   } catch (error) {
+    log("error", error);
     throw newError("Failed to delete product from cart", error);
   }
 };
@@ -124,8 +133,11 @@ userSchema.methods.deleteItemFromCart = async function (productId) {
 userSchema.methods.clearCart = async function () {
   try {
     this.cart = { items: [] };
+
+    log("info", "Cart cleared");
     return await this.save();
   } catch (error) {
+    log("error", error);
     throw newError("Failed to clear cart", error);
   }
 };
@@ -135,6 +147,7 @@ userSchema.methods.getOrders = async function () {
     const orders = await Order.find({ "user.userId": this._id });
     return orders;
   } catch (error) {
+    log("error", error);
     throw newError("Failed to find orders", error);
   }
 };
@@ -161,11 +174,11 @@ userSchema.methods.addOrder = async function () {
       products,
     });
 
-    console.log("Created order:", order); // DEBUGGING
-
     await order.save();
     await this.clearCart();
+    log("success", "Order created");
   } catch (error) {
+    log("error", error);
     throw newError("Failed to add an order", error);
   }
 };

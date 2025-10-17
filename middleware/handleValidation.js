@@ -1,12 +1,17 @@
 import { validationResult } from "express-validator";
+import createLogger from "../utils/logger.js";
+
+const log = createLogger(import.meta.url);
 
 export default function handleValidation(viewPath, fixedLocals) {
   return (req, res, next) => {
     if (
       fixedLocals.redirect !== true &&
       (!fixedLocals.path || !fixedLocals.pageTitle)
-    )
+    ) {
+      log("error", "'handleValidation' function args missing");
       throw new Error("Missing 'handleValidation' function args");
+    }
 
     const errors = validationResult(req);
     if (errors.isEmpty()) return next();
@@ -14,9 +19,14 @@ export default function handleValidation(viewPath, fixedLocals) {
     const errorMessage = errors.errors.map(
       (error) => new Object({ cause: error.path, message: error.msg })
     ); // format to an array
-    console.log("Errors:", errorMessage); // DEBUGGING
+
+    log(
+      "warn",
+      `Input validation errors:\n${JSON.stringify(errorMessage, null, 2)}`
+    );
 
     if (fixedLocals.redirect === true) {
+      log("info", "User forcefully redirected");
       req.flash("error", errorMessage);
       return res.redirect(viewPath);
     }
