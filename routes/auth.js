@@ -1,16 +1,16 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const isAuthed = require("../middleware/isAuthed");
-const authController = require("../controllers/auth");
-const catchErrAsync = require("../utils/catchErrAsync");
-const {
+import isAuthed from "../middleware/isAuthed.js";
+import * as authController from "../controllers/auth.js";
+import catchErrAsync from "../utils/catchErrAsync.js";
+import {
   validateLogin,
   validateSignup,
   validateResetPassword,
   validateResetPasswordForm,
-} = require("../utils/validation");
-const handleValidation = require("../middleware/handleValidation");
+} from "../utils/validation.js";
+import handleValidation from "../middleware/handleValidation.js";
 
 router.get(
   "/login",
@@ -69,4 +69,4 @@ router.post(
   catchErrAsync(authController.postResetPasswordForm)
 );
 
-module.exports = router;
+export default router;

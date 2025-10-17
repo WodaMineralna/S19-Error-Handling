@@ -1,11 +1,11 @@
-const newError = require("../utils/newError");
+import newError from "../utils/newError.js";
 
-const Order = require("./order");
-const Product = require("./product");
+import Order from "./order.js";
+import Product from "./product.js";
 
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 const userSchema = new Schema({
   email: {
@@ -170,4 +170,4 @@ userSchema.methods.addOrder = async function () {
   }
 };
 
-module.exports = mongoose.model("User", userSchema);
+export default mongoose.model("User", userSchema);

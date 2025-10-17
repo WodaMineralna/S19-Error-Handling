@@ -1,4 +1,4 @@
-module.exports = (req, res, next) => {
+export default (req, res, next) => {
   res.locals.loggedIn = req.session.loggedIn;
   res.locals.csrfToken = req.csrfToken();
   res.locals.oldInput = req.body.oldInput ?? {};

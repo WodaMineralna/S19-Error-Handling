@@ -1,8 +1,8 @@
-require("dotenv").config();
-const mongoose = require("mongoose");
+import "dotenv/config";
+import mongoose from "mongoose";
 
-const required = require("../../utils/requireEnvVar");
-const newError = require("../../utils/newError");
+import required from "../../utils/requireEnvVar.js";
+import newError from "../../utils/newError.js";
 
 function buildAtlasUri() {
   const user = required("MONGO_USER");
@@ -41,4 +41,4 @@ function close() {
   return mongoose.connection.close();
 }
 
-module.exports = { mongoConnect, close, mongoose, getMongoDB_URI };
+export { mongoConnect, close, mongoose, getMongoDB_URI };

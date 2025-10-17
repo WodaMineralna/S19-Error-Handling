@@ -1,23 +1,23 @@
-const {
+import {
   loginUser,
   singupUser,
   resetPassword,
   validateToken,
   updatePassword,
-} = require("../models/auth");
+} from "../models/auth.js";
 
-const newError = require("../utils/newError");
+import newError from "../utils/newError.js";
 
 const PLACEHOLDER_DETAILS = { cause: null, message: "Something went wrong..." };
 
-exports.getLogin = (req, res, next) => {
+export const getLogin = (req, res, next) => {
   return res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
   });
 };
 
-exports.postLogin = async (req, res, next) => {
+export const postLogin = async (req, res, next) => {
   const { email, password } = req.body;
   const {
     didSucceed,
@@ -45,21 +45,21 @@ exports.postLogin = async (req, res, next) => {
   }
 };
 
-exports.postLogout = async (req, res, next) => {
+export const postLogout = async (req, res, next) => {
   req.session.destroy((err) => {
     if (err) throw newError("Failed to logout", err);
     return res.redirect("/");
   });
 };
 
-exports.getSignup = (req, res, next) => {
+export const getSignup = (req, res, next) => {
   return res.render("auth/signup", {
     path: "/signup",
     pageTitle: "Signup",
   });
 };
 
-exports.postSignup = async (req, res, next) => {
+export const postSignup = async (req, res, next) => {
   const { email, password } = req.body;
   const { didSucceed, details = PLACEHOLDER_DETAILS } = await singupUser({
     email,
@@ -79,14 +79,14 @@ exports.postSignup = async (req, res, next) => {
   }
 };
 
-exports.getResetPassword = (req, res, next) => {
+export const getResetPassword = (req, res, next) => {
   return res.render("auth/reset-password", {
     path: "/reset-password",
     pageTitle: "Reset Password",
   });
 };
 
-exports.postResetPassword = async (req, res, next) => {
+export const postResetPassword = async (req, res, next) => {
   const { email } = req.body;
   const {
     didSucceed,
@@ -108,7 +108,7 @@ exports.postResetPassword = async (req, res, next) => {
   }
 };
 
-exports.getResetPasswordForm = async (req, res, next) => {
+export const getResetPasswordForm = async (req, res, next) => {
   const token = req.params.token;
   const { didSucceed, details = PLACEHOLDER_DETAILS } = await validateToken(
     token
@@ -127,7 +127,7 @@ exports.getResetPasswordForm = async (req, res, next) => {
   }
 };
 
-exports.postResetPasswordForm = async (req, res, next) => {
+export const postResetPasswordForm = async (req, res, next) => {
   const { password, confirmPassword, token } = req.body;
   const {
     didSucceed,
@@ -155,4 +155,16 @@ exports.postResetPasswordForm = async (req, res, next) => {
     req.flash("info", details);
     return res.redirect("/login");
   }
+};
+
+export default {
+  getLogin,
+  postLogin,
+  postLogout,
+  getSignup,
+  postSignup,
+  getResetPassword,
+  postResetPassword,
+  getResetPasswordForm,
+  postResetPasswordForm,
 };

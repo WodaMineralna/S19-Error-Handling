@@ -1,13 +1,13 @@
-const session = require("express-session");
-const MongoDBStore = require("connect-mongodb-session")(session);
+import session from "express-session";
+import MongoDBStore from "connect-mongodb-session";
 
-const { getMongoDB_URI } = require("../src/db/database");
-const required = require("../utils/requireEnvVar");
+import { getMongoDB_URI } from "../src/db/database.js";
+import required from "../utils/requireEnvVar.js";
 
 const MongoDB_URI = getMongoDB_URI();
 
-module.exports = () => {
-  const store = new MongoDBStore({
+export default () => {
+  const store = new (MongoDBStore(session))({
     uri: MongoDB_URI,
     collection: "sessions",
   });

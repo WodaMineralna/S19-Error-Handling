@@ -1,12 +1,12 @@
-exports.get404 = (req, res, next) => {
+export function get404(req, res, next) {
   return res.status(404).render("error", {
     errorData: { message: "Error (404): Page not found" },
     pageTitle: "An error occured!",
     path: "/error",
   });
-};
+}
 
-exports.getErrorPage = (error, req, res, next) => {
+export function getErrorPage(error, req, res, next) {
   const status = error.status || 500;
   const message = error.message || "Unhandled error!";
   const details = error.details || "No error details found.";
@@ -20,4 +20,9 @@ exports.getErrorPage = (error, req, res, next) => {
     pageTitle: "An error occured!",
     path: "/error",
   });
+}
+
+export default {
+  get404,
+  getErrorPage,
 };

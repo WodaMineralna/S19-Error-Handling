@@ -5,4 +5,4 @@ const newError = (message, details, status) => {
   return error;
 };
 
-module.exports = newError;
+export default newError;

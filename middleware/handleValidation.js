@@ -1,6 +1,6 @@
-const { validationResult } = require("express-validator");
+import { validationResult } from "express-validator";
 
-module.exports = function handleValidation(viewPath, fixedLocals) {
+export default function handleValidation(viewPath, fixedLocals) {
   return (req, res, next) => {
     if (
       fixedLocals.redirect !== true &&
@@ -37,4 +37,4 @@ module.exports = function handleValidation(viewPath, fixedLocals) {
       productId: req.body.productId ?? undefined,
     });
   };
-};
+}

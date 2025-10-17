@@ -1,8 +1,8 @@
-const newError = require("../utils/newError");
+import newError from "../utils/newError.js";
 
-const { default: mongoose } = require("mongoose");
+import mongoose from "mongoose";
 
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 const productSchema = new Schema({
   title: { type: String, required: true },
@@ -132,4 +132,4 @@ productSchema.statics.deleteProduct = async function (id, userId) {
   }
 };
 
-module.exports = mongoose.model("Product", productSchema);
+export default mongoose.model("Product", productSchema);

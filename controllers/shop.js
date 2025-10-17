@@ -1,26 +1,26 @@
-const Product = require("../models/product");
+import Product from "../models/product.js";
 
 const PLACEHOLDER_DETAILS = { cause: null, message: "Something went wrong..." };
 
-exports.getIndex = async (req, res, next) => {
+export async function getIndex(req, res, next) {
   const products = await Product.fetchAll();
   return res.render("shop/index", {
     products,
     pageTitle: "Shop",
     path: "/",
   });
-};
+}
 
-exports.getProductsPage = async (req, res, next) => {
+export async function getProductsPage(req, res, next) {
   const products = await Product.fetchAll();
   return res.render("shop/product-list", {
     products,
     pageTitle: "All Products",
     path: "/products",
   });
-};
+}
 
-exports.getProduct = async (req, res, next) => {
+export async function getProduct(req, res, next) {
   const id = req.params.id;
   const { didSucceed, details, product } = await Product.findProductById(id);
 
@@ -35,9 +35,9 @@ exports.getProduct = async (req, res, next) => {
       path: "/products",
     });
   }
-};
+}
 
-exports.getCart = async (req, res, next) => {
+export async function getCart(req, res, next) {
   const cartItems = await req.user.getCart();
 
   return res.render("shop/cart", {
@@ -45,18 +45,18 @@ exports.getCart = async (req, res, next) => {
     path: "/cart",
     pageTitle: "Your Cart",
   });
-};
+}
 
-exports.postCart = async (req, res, next) => {
+export async function postCart(req, res, next) {
   const id = req.body.productId;
   const { didSucceed, details = PLACEHOLDER_DETAILS } =
     await req.user.addToCart(id);
 
   req.flash(didSucceed ? "info" : "error", details);
   return res.redirect("/products");
-};
+}
 
-exports.postDeleteCart = async (req, res, next) => {
+export async function postDeleteCart(req, res, next) {
   const id = req.body.productId;
 
   const { didSucceed, details = PLACEHOLDER_DETAILS } =
@@ -64,19 +64,30 @@ exports.postDeleteCart = async (req, res, next) => {
 
   req.flash(didSucceed ? "info" : "error", details);
   return res.redirect("/cart");
-};
+}
 
-exports.getOrders = async (req, res, next) => {
+export async function getOrders(req, res, next) {
   const orders = await req.user.getOrders();
   return res.render("shop/orders", {
     orders,
     path: "/orders",
     pageTitle: "Your Orders",
   });
-};
+}
 
-exports.postOrder = async (req, res, next) => {
+export async function postOrder(req, res, next) {
   await req.user.addOrder();
 
   return res.redirect("/orders");
+}
+
+export default {
+  getIndex,
+  getProductsPage,
+  getProduct,
+  getCart,
+  postCart,
+  postDeleteCart,
+  getOrders,
+  postOrder,
 };

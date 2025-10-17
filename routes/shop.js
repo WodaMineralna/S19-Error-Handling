@@ -1,11 +1,11 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const isAuthed = require("../middleware/isAuthed");
-const shopController = require("../controllers/shop");
-const catchErrAsync = require("../utils/catchErrAsync");
-const { validateObjectId } = require("../utils/validation");
-const handleValidation = require("../middleware/handleValidation");
+import isAuthed from "../middleware/isAuthed.js";
+import shopController from "../controllers/shop.js";
+import catchErrAsync from "../utils/catchErrAsync.js";
+import { validateObjectId } from "../utils/validation.js";
+import handleValidation from "../middleware/handleValidation.js";
 
 router.get("/", catchErrAsync(shopController.getIndex));
 
@@ -50,4 +50,4 @@ router.post(
   catchErrAsync(shopController.postOrder)
 );
 
-module.exports = router;
+export default router;

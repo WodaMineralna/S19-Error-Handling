@@ -1,7 +1,7 @@
-const nodemailer = require("nodemailer");
-const sendgridTransport = require("nodemailer-sendgrid-transport");
+import nodemailer from "nodemailer";
+import sendgridTransport from "nodemailer-sendgrid-transport";
 
-const required = require("../utils/requireEnvVar");
+import required from "../utils/requireEnvVar.js";
 
 const transporter = nodemailer.createTransport(
   sendgridTransport({
@@ -11,4 +11,4 @@ const transporter = nodemailer.createTransport(
   })
 );
 
-module.exports = transporter;
+export default transporter;

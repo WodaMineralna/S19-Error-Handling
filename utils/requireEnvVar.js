@@ -4,4 +4,4 @@ function required(name) {
   return v;
 }
 
-module.exports = required
+export default required;

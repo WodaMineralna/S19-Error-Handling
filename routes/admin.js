@@ -1,15 +1,15 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const isAuthed = require("../middleware/isAuthed");
-const adminController = require("../controllers/admin");
-const catchErrAsync = require("../utils/catchErrAsync");
-const {
+import isAuthed from "../middleware/isAuthed.js";
+import * as adminController from "../controllers/admin.js";
+import catchErrAsync from "../utils/catchErrAsync.js";
+import {
   validateObjectId,
   validateAddProductForm,
   validateEditProductForm,
-} = require("../utils/validation");
-const handleValidation = require("../middleware/handleValidation");
+} from "../utils/validation.js";
+import handleValidation from "../middleware/handleValidation.js";
 
 // /admin/products => GET
 router.get(
@@ -69,4 +69,4 @@ router.post(
   catchErrAsync(adminController.postDeleteProduct)
 );
 
-module.exports = router;
+export default router;

@@ -1,8 +1,7 @@
-require("dotenv").config();
-const app = require("./app");
-const { mongoConnect } = require("./src/db/database");
-
-const required = require("./utils/requireEnvVar")
+import "dotenv/config";
+import app from "./app.js";
+import { mongoConnect } from "./src/db/database.js";
+import required from "./utils/requireEnvVar.js";
 
 const PORT = required("SERVER_PORT") || 3000;
 

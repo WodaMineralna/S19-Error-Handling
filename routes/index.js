@@ -1,12 +1,12 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const adminRoutes = require("./admin");
-const shopRoutes = require("./shop");
-const authRoutes = require("./auth");
+import adminRoutes from "./admin.js";
+import shopRoutes from "./shop.js";
+import authRoutes from "./auth.js";
 
 router.use("/admin", adminRoutes);
 router.use(shopRoutes);
 router.use(authRoutes);
 
-module.exports = router;
+export default router;

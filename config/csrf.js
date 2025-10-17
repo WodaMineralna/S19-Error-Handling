@@ -1,4 +1,4 @@
-const csrf = require("csurf");
+import csrf from "csurf";
 const csrfProtection = csrf();
 
-module.exports = csrfProtection;
+export default csrfProtection;

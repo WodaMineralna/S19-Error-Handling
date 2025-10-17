@@ -1,6 +1,6 @@
-const bcrypt = require("bcryptjs");
-const { oneOf, check, body, param, query } = require("express-validator");
-const mongoose = require("mongoose");
+import bcrypt from "bcryptjs";
+import { oneOf, check, body, param, query } from "express-validator";
+import mongoose from "mongoose";
 
 const PASSWORD_MIN_LENGTH = 3; // only 3 so app is easier to debug
 
@@ -122,7 +122,7 @@ function validateEditProductForm(idName) {
   return [...validateObjectId(idName), ...validateAddProductForm()];
 }
 
-module.exports = {
+export {
   comparePasswords,
   validateLogin,
   validateSignup,

@@ -1,6 +1,12 @@
-const crypto = require("crypto");
-const bcrypt = require("bcryptjs");
+import crypto from "crypto";
+import bcrypt from "bcryptjs";
 
+import User from "./user.js";
+
+import { comparePasswords } from "../utils/validation.js";
+import newError from "../utils/newError.js";
+import sendEmail from "../utils/sendEmail.js";
+import required from "../utils/requireEnvVar.js";
 const User = require("./user");
 
 const { comparePasswords } = require("../utils/validation");
@@ -10,7 +16,7 @@ const required = require("../utils/requireEnvVar");
 
 const EMAIL_SEND_DISABLED = required("EMAIL_SEND_DISABLED");
 
-async function loginUser(userData) {
+export async function loginUser(userData) {
   const errorDetails = [
     { cause: "email", message: "Invalid email or password" },
     { cause: "password" },
@@ -45,7 +51,7 @@ async function loginUser(userData) {
   }
 }
 
-async function singupUser(userData) {
+export async function singupUser(userData) {
   try {
     const { email, password } = userData;
 
@@ -95,7 +101,7 @@ async function singupUser(userData) {
   }
 }
 
-async function resetPassword(email) {
+export async function resetPassword(email) {
   return new Promise((resolve, reject) => {
     crypto.randomBytes(32, async (err, buffer) => {
       if (err)
@@ -154,7 +160,7 @@ async function resetPassword(email) {
 }
 
 // * looks for req.query.token in DB and returns matching user._id if token was found and not expired
-async function validateToken(token) {
+export async function validateToken(token) {
   // console.log("resetPassword token:", token); // DEBUGGING
   try {
     const matchingUser = await User.findOne({
@@ -183,7 +189,7 @@ async function validateToken(token) {
 }
 
 // * reads userId from hidden `token` value & re-validates, checks DB for matching _id based on token and updates password
-async function updatePassword(formData) {
+export async function updatePassword(formData) {
   const { password, token } = formData;
   try {
     // ^ re-validate token to prevent tampering and (some) edge cases
@@ -244,7 +250,7 @@ async function updatePassword(formData) {
   }
 }
 
-module.exports = {
+export default {
   loginUser,
   singupUser,
   resetPassword,

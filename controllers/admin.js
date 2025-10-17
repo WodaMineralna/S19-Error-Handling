@@ -1,8 +1,8 @@
-const Product = require("../models/product");
+import Product from "../models/product.js";
 
 const PLACEHOLDER_DETAILS = { cause: null, message: "Something went wrong..." };
 
-exports.getProductsPage = async (req, res, next) => {
+export const getProductsPage = async (req, res, next) => {
   const products = await Product.fetchAll(req.user._id);
   return res.render("admin/products", {
     products,
@@ -11,7 +11,7 @@ exports.getProductsPage = async (req, res, next) => {
   });
 };
 
-exports.getAddProduct = (req, res, next) => {
+export const getAddProduct = (req, res, next) => {
   return res.render("admin/add-product", {
     pageTitle: "Add Product",
     path: "/admin/add-product",
@@ -19,7 +19,7 @@ exports.getAddProduct = (req, res, next) => {
   });
 };
 
-exports.postAddProduct = async (req, res, next) => {
+export const postAddProduct = async (req, res, next) => {
   const { title, imageUrl, description, price } = req.body;
   const { didSucceed, details = PLACEHOLDER_DETAILS } =
     await Product.addProduct({
@@ -44,7 +44,7 @@ exports.postAddProduct = async (req, res, next) => {
   }
 };
 
-exports.getEditProduct = async (req, res, next) => {
+export const getEditProduct = async (req, res, next) => {
   const editMode = req.query.edit;
   if (!editMode) return res.redirect("/");
 
@@ -70,7 +70,7 @@ exports.getEditProduct = async (req, res, next) => {
   }
 };
 
-exports.postEditProduct = async (req, res, next) => {
+export const postEditProduct = async (req, res, next) => {
   const id = req.body.productId;
   const { title, price, description, imageUrl } = req.body;
   const { didSucceed, details = PLACEHOLDER_DETAILS } =
@@ -87,11 +87,20 @@ exports.postEditProduct = async (req, res, next) => {
   return res.redirect("/admin/products");
 };
 
-exports.postDeleteProduct = async (req, res, next) => {
+export const postDeleteProduct = async (req, res, next) => {
   const id = req.body.productId;
   const { didSucceed, details = PLACEHOLDER_DETAILS } =
     await Product.deleteProduct(id, req.user._id);
 
   req.flash(didSucceed ? "info" : "error", details);
   return res.redirect("/admin/products");
+};
+
+export default {
+  getProductsPage,
+  getAddProduct,
+  postAddProduct,
+  getEditProduct,
+  postEditProduct,
+  postDeleteProduct,
 };

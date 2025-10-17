@@ -1,3 +1,5 @@
-const flash = require("connect-flash")();
+import flashFactory from "connect-flash";
 
-module.exports = flash
+const flash = flashFactory();
+
+export default flash;
