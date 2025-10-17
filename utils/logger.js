@@ -1,8 +1,10 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import chalk from "chalk";
+import required from "../utils/requireEnvVar.js";
 
 const projectRoot = process.cwd();
+const ENABLE_LOGGING = required("ENABLE_LOGGING");
 
 const colorPallete = {
   info: chalk.blue,
@@ -12,6 +14,11 @@ const colorPallete = {
 };
 
 function createLogger(metaUrl) {
+  if (ENABLE_LOGGING === "false")
+    return () => {
+      undefined;
+    };
+
   const filePath = path.relative(projectRoot, fileURLToPath(metaUrl));
   return (...args) => {
     const { line, fn } = getCallerInfo();
