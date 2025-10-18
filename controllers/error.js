@@ -1,3 +1,7 @@
+import createLogger from "../utils/logger.js";
+
+const log = createLogger(import.meta.url);
+
 export function get404(req, res, next) {
   return res.status(404).render("error", {
     errorData: { message: "Error (404): Page not found" },
@@ -11,7 +15,7 @@ export function getErrorPage(error, req, res, next) {
   const message = error.message || "Unhandled error!";
   const details = error.details || "No error details found.";
 
-  console.log(error); // DEBUGGING
+  log("error", `Error (${status}): ${message}\n${details}`); // DEBUGGING
   return res.status(status).render("error", {
     errorData: {
       message: `Error (${status}): ${message}`,
