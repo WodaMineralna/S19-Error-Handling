@@ -42,10 +42,15 @@ router.post(
   catchErrAsync(authController.postSignup)
 );
 
-router.get("/reset-password", authController.getResetPassword);
+router.get(
+  "/reset-password",
+  isAuthed({ shouldBeAuthed: false }),
+  authController.getResetPassword
+);
 
 router.post(
   "/reset-password",
+  isAuthed({ shouldBeAuthed: false }),
   validateResetPassword(),
   handleValidation("auth/reset-password", {
     path: "/reset-password",
@@ -56,11 +61,13 @@ router.post(
 
 router.get(
   "/reset-password/:token",
+  isAuthed({ shouldBeAuthed: false }),
   catchErrAsync(authController.getResetPasswordForm)
 );
 
 router.post(
   "/update-password",
+  isAuthed({ shouldBeAuthed: false }),
   validateResetPasswordForm(),
   handleValidation("auth/form-reset-password", {
     path: "/form-reset-password",
