@@ -1,10 +1,8 @@
 import mongoose from "mongoose";
-import newError from "../utils/newError.js";
-import createLogger from "../utils/logger.js";
-
-const log = createLogger(import.meta.url);
+import { newError, createLogger } from "../utils/index.js";
 
 const { Schema } = mongoose;
+const log = createLogger(import.meta.url);
 
 const productSchema = new Schema({
   title: { type: String, required: true },

@@ -1,5 +1,5 @@
 import { validationResult } from "express-validator";
-import createLogger from "../utils/logger.js";
+import { createLogger } from "../utils/index.js";
 
 const log = createLogger(import.meta.url);
 

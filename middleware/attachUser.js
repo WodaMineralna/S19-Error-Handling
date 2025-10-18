@@ -1,7 +1,6 @@
-import User from "../models/user.js";
-import catchErrAsync from "../utils/catchErrAsync.js";
+import { createLogger, catchErrAsync } from "../utils/index.js";
 
-import createLogger from "../utils/logger.js";
+import User from "../models/user.js";
 
 const log = createLogger(import.meta.url);
 

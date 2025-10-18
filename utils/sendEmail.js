@@ -1,8 +1,6 @@
 import transporter from "../config/nodemailer.js";
+import { newError, requireEnvVar as required, createLogger } from "./index.js";
 
-import newError from "../utils/newError.js";
-import required from "../utils/requireEnvVar.js";
-import createLogger from "./logger.js";
 
 const log = createLogger(import.meta.url);
 

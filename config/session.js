@@ -2,7 +2,7 @@ import session from "express-session";
 import MongoDBStore from "connect-mongodb-session";
 
 import { getMongoDB_URI } from "../src/db/database.js";
-import required from "../utils/requireEnvVar.js";
+import { requireEnvVar as required } from "../utils/index.js";
 
 const MongoDB_URI = getMongoDB_URI();
 

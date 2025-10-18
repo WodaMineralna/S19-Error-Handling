@@ -1,8 +1,7 @@
 import "dotenv/config";
 import mongoose from "mongoose";
 
-import required from "../../utils/requireEnvVar.js";
-import newError from "../../utils/newError.js";
+import { requireEnvVar as required, newError } from "../../utils/index.js";
 
 function buildAtlasUri() {
   const user = required("MONGO_USER");

@@ -1,13 +1,12 @@
 import mongoose from "mongoose";
-import newError from "../utils/newError.js";
-import createLogger from "../utils/logger.js";
+import { newError, createLogger } from "../utils/index.js";
 
 import Order from "./order.js";
 import Product from "./product.js";
 
+const { Schema } = mongoose;
 const log = createLogger(import.meta.url);
 
-const { Schema } = mongoose;
 
 const userSchema = new Schema({
   email: {

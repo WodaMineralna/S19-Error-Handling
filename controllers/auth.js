@@ -6,7 +6,7 @@ import {
   updatePassword,
 } from "../models/auth.js";
 
-import newError from "../utils/newError.js";
+import { newError } from "../utils/index.js";
 
 const PLACEHOLDER_DETAILS = { cause: null, message: "Something went wrong..." };
 

@@ -4,10 +4,12 @@ import bcrypt from "bcryptjs";
 import User from "./user.js";
 
 import { comparePasswords } from "../utils/validation.js";
-import newError from "../utils/newError.js";
-import sendEmail from "../utils/sendEmail.js";
-import required from "../utils/requireEnvVar.js";
-import createLogger from "../utils/logger.js";
+import {
+  newError,
+  sendEmail,
+  requireEnvVar as required,
+  createLogger,
+} from "../utils/index.js";
 
 const log = createLogger(import.meta.url);
 
