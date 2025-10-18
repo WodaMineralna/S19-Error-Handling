@@ -5,7 +5,7 @@ Practice code for Section 19 - Error Handling, part of the course "NodeJS - The 
 This project covers:
 - Refining and standardizing the existing error handling system
 - Using appropriate HTTP status codes across the app
-- Creating custom logging utility for standardized console outputs
+- Creating custom logging utility for standardized console outputs with `chalk`
 - Introducing an environment variable for toggling logging during development
 - Ensuring all handled errors return meaningful messages and codes for debugging
 
@@ -24,6 +24,7 @@ This project covers:
 - Nodemailer with SendGrid transport
 - Docker
 - dotenv
+- chalk
 - Nodemon
   
 # How to Run
