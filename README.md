@@ -104,7 +104,7 @@ A helper script is included to quickly test DB connectivity
 ```bash
 npm run db:test
 ```
-> Runs `node scripts/test-db.cjs`
+> Runs `node scripts/test-db.js`
 
 Expected output:
 ```
@@ -168,7 +168,7 @@ Expected output:
 ## NPM Scripts
 
 - **`npm start` / `node .\server.js`** → start the Node app
-- **`npm run db:test`** → run DB connectivity test (`scripts/test-db.cjs`)
+- **`npm run db:test`** → run DB connectivity test (`scripts/test-db.js`)
 - **`npm run db:up`** → start MongoDB container
 - **`npm run db:down`** → stop MongoDB container
 - **`npm run db:reset`** → reset database (drop volume + re-init)
