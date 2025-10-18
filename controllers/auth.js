@@ -38,7 +38,7 @@ export const postLogin = async (req, res, next) => {
     req.session.user = user;
     req.session.loggedIn = true;
     req.session.save((err) => {
-      if (err) throw newError("Failed to log in", err);
+      if (err) return next(newError("Failed to log in", err));
       req.flash("info", details);
       return res.redirect("/");
     });
@@ -47,7 +47,7 @@ export const postLogin = async (req, res, next) => {
 
 export const postLogout = async (req, res, next) => {
   req.session.destroy((err) => {
-    if (err) throw newError("Failed to logout", err);
+    if (err) return next(newError("Failed to logout", err));
     return res.redirect("/");
   });
 };
